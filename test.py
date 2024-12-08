@@ -1,13 +1,14 @@
 import pygame
 import random
-#by AD11
 
-Margin = 1
-Width, Height = 1000, 600
-Rows, Cols = 10 , 10
-CELL_SIZE = Width // Cols
-obstacles = 25
-numbers = 10
+# Initialize Pygame
+pygame.init()
+
+# Screen dimensions
+WIDTH, HEIGHT = 600, 600
+ROWS, COLS = 10, 10
+CELL_SIZE = WIDTH // COLS
+
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -16,52 +17,54 @@ RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 BLUE = (0, 0, 255)
 
-pygame.init()
+# Screen setup
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Maze Generator")
 
-sc = pygame.display.set_mode((Width , Height))
-pygame.display.set_caption("Group MazeMaker")
-
-font = pygame.font.SysFont("Arial" , 20)
-
-clock = pygame.time.Clock()
+# Font setup
+font = pygame.font.SysFont("Arial", 24)
 
 def generate_maze(rows, cols, obstacles, numbers):
+    """
+    Generates a maze grid with specified rows, cols, obstacles, and numbers.
+    """
     maze = [[' ' for _ in range(cols)] for _ in range(rows)]
 
-    maze[0][0] = "Start"
-    maze[rows - 1][cols - 1] = "End"
+    # Place start and end points
+    maze[0][0] = 'S'
+    maze[rows-1][cols-1] = 'E'
 
-    #Obstacles
+    # Randomly place obstacles
     placed_obstacles = 0
     while placed_obstacles < obstacles:
-        r, c = random.randint(0, rows-1), random.randint(0, cols-1) #random number for column =c , and same thing for r
+        r, c = random.randint(0, rows-1), random.randint(0, cols-1)
         if maze[r][c] == ' ':
-            maze[r][c] = 'XcloseX'
-            placed_obstacles = placed_obstacles + 1
+            maze[r][c] = 'X'
+            placed_obstacles += 1
 
-
-    #Numbers
+    # Randomly place numbers
     placed_numbers = 0
     while placed_numbers < numbers:
         r, c = random.randint(0, rows-1), random.randint(0, cols-1)
         if maze[r][c] == ' ':
-            maze[r][c] = random.randint(-9, 9)
-            placed_numbers = placed_numbers + 1
+            maze[r][c] = random.randint(-10, 10)
+            placed_numbers += 1
 
     return maze
- 
 
 def draw_maze(screen, maze):
-
+    """
+    Draws the maze on the screen.
+    """
     for row in range(len(maze)):
         for col in range(len(maze[row])):
-            x = col * CELL_SIZE
-            y = row * CELL_SIZE
-            if maze[row][col] == 'Start':
+            x, y = col * CELL_SIZE, row * CELL_SIZE
+            # Draw cells
+            if maze[row][col] == 'S':
                 pygame.draw.rect(screen, GREEN, (x, y, CELL_SIZE, CELL_SIZE))
-            elif maze[row][col] == 'End':
+            elif maze[row][col] == 'E':
                 pygame.draw.rect(screen, RED, (x, y, CELL_SIZE, CELL_SIZE))
-            elif maze[row][col] == 'XcloseX':
+            elif maze[row][col] == 'X':
                 pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE))
             elif isinstance(maze[row][col], int):
                 pygame.draw.rect(screen, YELLOW, (x, y, CELL_SIZE, CELL_SIZE))
@@ -72,19 +75,29 @@ def draw_maze(screen, maze):
             # Draw grid lines
             pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)
 
-# Generate the maze
-maze = generate_maze(Rows, Cols, obstacles, numbers)
+# Parameters for the maze
+rows, cols = ROWS, COLS
+obstacles = 20
+numbers = 15
 
-gameOn = True
-while gameOn:
+# Generate the maze
+maze = generate_maze(rows, cols, obstacles, numbers)
+
+# Main loop
+running = True
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            gameOn = False
+            running = False
 
-    sc.fill(WHITE)
-    draw_maze(sc, maze)
+    # Fill screen with white
+    screen.fill(WHITE)
+
+    # Draw the maze
+    draw_maze(screen, maze)
+
+    # Update the display
     pygame.display.flip()
 
-    
+# Quit Pygame
 pygame.quit()
-

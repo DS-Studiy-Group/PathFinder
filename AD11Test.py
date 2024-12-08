@@ -1,6 +1,5 @@
 import pygame
 import random
-#by AD11
 
 Margin = 1
 Width, Height = 1000, 600
