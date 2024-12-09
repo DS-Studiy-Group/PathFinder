@@ -1,44 +1,21 @@
 import pygame
+from resources.colors import GRAY, WHITE
 
-Tile = 50
-margin = 1
-Rows , Cols = 10 , 10
-width , height = 700 , Cols * Tile
-
-#colors
-WHITE = pygame.Color("white")
-BLACK = pygame.Color("black")
-GRAY = pygame.Color("gray")
-
-pygame.init()
-sc = pygame.display.set_mode((width, height))
-pygame.display.set_caption("AD Maze Generator")
 
 class Cell:
-    def __init__(self, x, y):
+    Size = 50
+    Margin = 1
+
+    def __init__(self, root, x, y):
+        self.root = root
         self.x = x
         self.y = y
         self.is_wall = False
+        self.is_temp_wall = False
         self.visited = False
+
     def draw(self):
-        x = self.x * Tile
-        y = self.y * Tile
-        pygame.draw.rect(sc, WHITE, (x, y, Tile, Tile))
-        pygame.draw.rect(sc, GRAY, (x, y, Tile, Tile) , 2)
-
-grid = [[Cell(x, y) for x in range(Cols)] for y in range(Rows)]
-
-gameOn = True
-while gameOn:
-        sc.fill(GRAY)
-        for row in grid:
-            for cell in row:
-                cell.draw()
-    
-        pygame.display.flip()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                gameOn = False
-        
-pygame.quit()
+        x = self.x * self.Size
+        y = self.y * self.Size
+        pygame.draw.rect(self.root, WHITE, (x, y, self.Size, self.Size))
+        pygame.draw.rect(self.root, GRAY, (x, y, self.Size, self.Size), 2)
