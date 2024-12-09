@@ -1,6 +1,6 @@
 import pygame
 import random
-
+##
 Margin = 1
 Width, Height = 1000, 600
 Rows, Cols = 10 , 10
