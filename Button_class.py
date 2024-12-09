@@ -1,22 +1,45 @@
-from pygame import Surface, Rect
-from pygame.font import Font
+from pygame import font, Surface, Rect
 
+from resources.colors import BLACK
+
+font.init()
 
 class Button():
-    font = Font("arial.ttf", 20)
+    font = font.Font("resources/fonts/Quicksand-Regular.ttf", 20)
 
-    def __init__(self, pos, size, text, base_color, hovering_color):
+    def __init__(self,
+                 pos, size,
+                 text,
+                 base_fore_color,
+                 base_back_color,
+                 alt_fore_color,
+                 alt_back_color,
+                 ):
         self.pos = pos
         self.size = size
-        self.base_color, self.hovering_color = base_color, hovering_color
-        self.color = base_color
+        self.base_back_color = base_back_color,
+        self.alt_back_color = alt_back_color
+        self.base_fore_color = base_fore_color
+        self.alt_fore_color = alt_fore_color
+
+        self.is_alt = False
+
         self.text = text
 
     def button_surface(self):
+        fore_color = ()
+        back_color = ()
+        if self.is_alt:
+            fore_color = self.alt_fore_color
+            back_color = self.alt_back_color
+        else:
+            fore_color = self.base_fore_color
+            back_color = self.base_back_color
+
         surf = Surface(self.size)
-        surf.fill(self.color)
-        text_surf = self.font.render(self.text, True, self.base_color)
-        text_rect = self.text.get_rect(center=self.pos)
+        surf.fill(back_color)
+        text_surf = self.font.render(self.text, True, BLACK)
+        text_rect = text_surf.get_rect(center=surf.get_rect().center)
         surf.blit(text_surf, text_rect)
         return surf
 
@@ -28,5 +51,9 @@ class Button():
 
     def update(self, screen):
         screen.blit(self.button_surface(), self.pos)
+
+    def left_mouse_down(self, point):
+        if self.point_in_bound(point):
+            self.is_alt = not self.is_alt
 
 
