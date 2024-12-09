@@ -1,8 +1,8 @@
 import pygame
 from pygame import font
 
-from Button_class import Button
-from ClassCell import Cell
+from models.Button import Button
+from models.Cell import Cell
 from resources import colors
 
 Rows, Cols = 10, 10
@@ -16,7 +16,8 @@ pygame.display.set_caption("AD Maze Generator")
 
 grid = [[Cell(sc, x, y) for x in range(Cols)] for y in range(Rows)]
 
-btn1 = Button((510, 8), (178, 50), "test", colors.BLACK, colors.GHOST, colors.WHITE, colors.LIME_GREEN)
+btn_color_schema = (colors.BLACK, colors.GHOST, colors.WHITE, colors.LIME_GREEN)
+btn1 = Button((510, 8), (178, 50), "test", *btn_color_schema)
 
 gameOn = True
 while gameOn:
