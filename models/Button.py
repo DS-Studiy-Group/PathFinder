@@ -15,16 +15,20 @@ class Button():
                  alt_fore_color,
                  alt_back_color,
                  ):
+
         self.pos = pos
         self.size = size
+        self.text = text
+
         self.base_back_color = base_back_color,
         self.alt_back_color = alt_back_color
         self.base_fore_color = base_fore_color
         self.alt_fore_color = alt_fore_color
 
         self.is_alt = False
+        self.action = None
 
-        self.text = text
+
 
     def button_surface(self):
         fore_color = ()
@@ -55,5 +59,9 @@ class Button():
     def left_mouse_down(self, point):
         if self.point_in_bound(point):
             self.is_alt = not self.is_alt
+            if self.action is not None:
+                self.action(self.is_alt)
 
+    def set_action(self, func):
+        self.action = func
 
