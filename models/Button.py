@@ -4,6 +4,7 @@ from resources.colors import BLACK
 
 font.init()
 
+
 class Button():
     font = font.Font("resources/fonts/Quicksand-Regular.ttf", 20)
 
@@ -28,8 +29,6 @@ class Button():
         self.is_alt = False
         self.action = None
 
-
-
     def button_surface(self):
         fore_color = ()
         back_color = ()
@@ -50,13 +49,13 @@ class Button():
     def point_in_bound(self, point):
         pos = self.pos
         size = self.size
-        rect = Rect(pos[0], pos[1], pos[0]+size[0], pos[1]+size[1])
+        rect = Rect(pos[0], pos[1], pos[0] + size[0], pos[1] + size[1])
         return rect.collidepoint(point)
 
     def update(self, screen):
         screen.blit(self.button_surface(), self.pos)
 
-    def left_mouse_down(self, point):
+    def left_mouse_down_listener(self, point):
         if self.point_in_bound(point):
             self.is_alt = not self.is_alt
             if self.action is not None:
@@ -64,4 +63,3 @@ class Button():
 
     def set_action(self, func):
         self.action = func
-

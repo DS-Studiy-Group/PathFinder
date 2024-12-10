@@ -19,7 +19,8 @@ pygame.display.set_caption("AD Maze Generator")
 grid = Maze(sc, cols=Cols, rows=Rows)
 
 btn_color_schema = (colors.BLACK, colors.GHOST, colors.WHITE, colors.LIME_GREEN)
-btn1 = Button((510, 8), (178, 50), "test", *btn_color_schema)
+add_wall_btn = Button((510, 8), (178, 50), "Add Wall", *btn_color_schema)
+add_wall_btn.set_action(grid.set_wall)
 
 gameOn = True
 while gameOn:
@@ -29,11 +30,13 @@ while gameOn:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == pygame.BUTTON_LEFT:
-                btn1.left_mouse_down(pygame.mouse.get_pos())
+                point = pygame.mouse.get_pos()
+                add_wall_btn.left_mouse_down_listener(point)
+                grid.cell_click_listener(point)
 
     sc.fill(colors.GRAY)
 
     grid.draw_maze()
-    btn1.update(sc)
+    add_wall_btn.update(sc)
     pygame.display.flip()
     clock.tick(60)
