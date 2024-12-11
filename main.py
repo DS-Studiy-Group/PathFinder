@@ -4,6 +4,7 @@ from pygame import font
 from models.Button import Button
 from models.Cell import Cell
 from models.Maze import Maze
+from models.TextBox import TextBox
 from resources import colors
 
 Rows, Cols = 10, 10
@@ -32,6 +33,8 @@ add_start_btn.set_action(grid.set_start)
 add_end_btn = Button(sc, (510, 182), (178, 50), "Add End", *btn_color_schema)
 add_end_btn.set_action(grid.set_end)
 
+value_txt = TextBox(sc, (510, 240), (178, 50), *btn_color_schema[:2])
+
 gameOn = True
 while gameOn:
     for event in pygame.event.get():
@@ -46,10 +49,14 @@ while gameOn:
                 add_value_btn.left_mouse_down_listener(point)
                 add_start_btn.left_mouse_down_listener(point)
                 add_end_btn.left_mouse_down_listener(point)
+                value_txt.left_mouse_down_listener(point)
                 grid.cell_click_listener(point)
 
         if event.type == pygame.KEYDOWN:
-            grid.cell_value(event.key)
+            if value_txt.focused:
+                value_txt.key_down_listener(event.key)
+            else:
+                grid.cell_value(event.key)
 
     sc.fill(colors.GRAY)
 
@@ -59,6 +66,7 @@ while gameOn:
     add_value_btn.update()
     add_start_btn.update()
     add_end_btn.update()
+    value_txt.update()
 
     pygame.display.flip()
     clock.tick(60)

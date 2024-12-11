@@ -1,50 +1,48 @@
+import pygame
 from pygame import font, Surface, Rect
 from resources import colors
 
 font.init()
 
 
-class Button():
-    btn_font = font.Font("resources/fonts/Quicksand-Regular.ttf", 20)
+class TextBox():
+    txt_font = font.Font("resources/fonts/Quicksand-Regular.ttf", 20)
 
     def __init__(self,
                  root,
                  pos, size,
-                 text,
                  base_fore_color,
                  base_back_color,
-                 alt_fore_color,
-                 alt_back_color,
+
                  ):
 
         self.root = root
         self.pos = pos
         self.size = size
-        self.text = text
+        self.text = ""
 
         self.base_back_color = base_back_color,
-        self.alt_back_color = alt_back_color
         self.base_fore_color = base_fore_color
-        self.alt_fore_color = alt_fore_color
 
-        self.is_alt = False
+        self.focused = False
         self.action = None
 
-    def button_surface(self):
+    def txt_surface(self):
         fore_color = ()
         back_color = ()
-        if self.is_alt:
-            fore_color = self.alt_fore_color
-            back_color = self.alt_back_color
-        else:
-            fore_color = self.base_fore_color
-            back_color = self.base_back_color
+
+        fore_color = self.base_fore_color
+        back_color = self.base_back_color
 
         surf = Surface(self.size)
-        surf.fill(back_color)
-        text_surf = self.btn_font.render(self.text, True, fore_color)
+        surf.fill(self.base_back_color)
+        text_surf = self.txt_font.render(self.text, True, fore_color)
         text_rect = text_surf.get_rect(center=surf.get_rect().center)
-        surf.blit(text_surf, text_rect)
+
+        if self.focused:
+            pygame.draw.line(surf, colors.SKY_BLUE, (2, self.size[1]-10),
+                         (self.size[0]-2, self.size[1]-10), 2)
+        surf.blit(text_surf, (2, text_rect.y))
         return surf
 
     def point_in_bound(self, point):
@@ -55,13 +53,17 @@ class Button():
         return rect[0] <= point[0] <= rect[2] and rect[1] <= point[1] <= rect[3]
 
     def update(self):
-        self.root.blit(self.button_surface(), self.pos)
+        self.root.blit(self.txt_surface(), self.pos)
 
     def left_mouse_down_listener(self, point):
         if self.point_in_bound(point):
-            self.is_alt = not self.is_alt
-            if self.action is not None:
-                self.action(self.is_alt)
+            self.focused = not self.focused
 
-    def set_action(self, func):
-        self.action = func
+    def key_down_listener(self, key):
+        if not self.focused:
+            return
+        if key == 8:
+            if len(self.text)> 0:
+                self.text = self.text[:-1]
+        elif 48 <= key <= 57:
+            self.text += chr(key)
