@@ -1,25 +1,45 @@
 import pygame
-from pygame import Rect
+from pygame import Rect, font, Surface
 
-from resources.colors import GRAY, WHITE, BLACK
+from resources import colors
+
+font.init()
 
 
 class Cell:
     Size = 50
     Margin = 1
+    cell_font =  font.Font("resources/fonts/Quicksand-Regular.ttf", 20)
 
     def __init__(self, root, x, y, action):
         self.root = root
         self.x = x
         self.y = y
+        self.gx = self.x * self.Size
+        self.gy = self.y * self.Size
         self.is_wall = False
-        self.is_temp_wall = False
         self.visited = False
-        self.rect = Rect(x*self.Size, y*self.Size, self.Size, self.Size)
         self.action = action
+        self.surface = Surface((self.Size, self.Size), pygame.SRCALPHA)
+        self.value = ""
+
+    def update_surf(self):
+
+        if not self.is_wall:
+            self.surface.fill(colors.WHITE)
+        else:
+            self.surface.fill(colors.BLACK)
+
+        text_surf = self.cell_font.render(self.value, True, colors.BLACK)
+        text_rect = text_surf.get_rect(center=self.surface.get_rect().center)
+        self.surface.blit(text_surf, text_rect)
+
+
+    def get_rect(self):
+        return Rect(self.gx, self.gy, self.Size, self.Size)
 
     def click_in_bound(self, point):
-        return self.rect.collidepoint(point)
+        return self.get_rect().collidepoint(point)
 
     def left_mouse_down_listener(self, point):
         if not self.click_in_bound(point):
@@ -28,10 +48,19 @@ class Cell:
             self.action(self)
 
     def draw(self):
-        x = self.x * self.Size
-        y = self.y * self.Size
-        if not self.is_wall:
-            pygame.draw.rect(self.root, WHITE, self.rect)
-        else:
-            pygame.draw.rect(self.root, BLACK,  self.rect)
-        pygame.draw.rect(self.root, GRAY, self.rect, 2)
+        self.update_surf()
+        self.root.blit(self.surface, (self.gx, self.gy))
+        pygame.draw.rect(self.root, colors.GRAY, self.get_rect(), 2)
+
+    def draw_mask(self, color):
+        pygame.draw.rect(self.surface, color, self.get_rect())
+        self.root.blit(self.surface, (self.gx, self.gy))
+
+
+    def add_char(self, char):
+        if len(self.value) < 2:
+            self.value += char
+
+    def del_char(self):
+        self.value = self.value[:-1]
+

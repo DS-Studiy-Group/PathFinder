@@ -1,14 +1,16 @@
+import pygame.draw
 from pygame import font, Surface, Rect
 
-from resources.colors import BLACK
+from resources import colors
 
 font.init()
 
 
 class Button():
-    font = font.Font("resources/fonts/Quicksand-Regular.ttf", 20)
+    btn_font = font.Font("resources/fonts/Quicksand-Regular.ttf", 20)
 
     def __init__(self,
+                 root,
                  pos, size,
                  text,
                  base_fore_color,
@@ -17,6 +19,7 @@ class Button():
                  alt_back_color,
                  ):
 
+        self.root = root
         self.pos = pos
         self.size = size
         self.text = text
@@ -41,7 +44,7 @@ class Button():
 
         surf = Surface(self.size)
         surf.fill(back_color)
-        text_surf = self.font.render(self.text, True, BLACK)
+        text_surf = self.btn_font.render(self.text, True, fore_color)
         text_rect = text_surf.get_rect(center=surf.get_rect().center)
         surf.blit(text_surf, text_rect)
         return surf
@@ -49,11 +52,12 @@ class Button():
     def point_in_bound(self, point):
         pos = self.pos
         size = self.size
-        rect = Rect(pos[0], pos[1], pos[0] + size[0], pos[1] + size[1])
-        return rect.collidepoint(point)
+        rect = (pos[0], pos[1], pos[0] + size[0], pos[1] + size[1])
 
-    def update(self, screen):
-        screen.blit(self.button_surface(), self.pos)
+        return rect[0] <= point[0] <= rect[2] and rect[1] <= point[1] <= rect[3]
+
+    def update(self):
+        self.root.blit(self.button_surface(), self.pos)
 
     def left_mouse_down_listener(self, point):
         if self.point_in_bound(point):

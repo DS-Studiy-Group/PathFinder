@@ -21,6 +21,9 @@ class Maze:
         self.rows = rows
         self.maze = [[Cell(root, x, y, self.cell_click) for x in range(cols)] for y in range(rows)]
         self.state = MazeState.NONE
+
+        self.set_value_selected_cell: Cell | None = None
+
         self.start_position = (0, 0)
         self.end_position = (-1, -1)
 
@@ -29,13 +32,14 @@ class Maze:
             for cell in row:
                 cell.draw()
 
-        start_cell = self.maze[self.start_position[0]][self.start_position[1]]
-        pygame.draw.rect(self.root, colors.LIME_GREEN, start_cell.rect)
+        if self.state == MazeState.SET_VALUE and self.set_value_selected_cell is not None:
+            self.set_value_selected_cell.draw_mask(colors.BLUE_HIGHLIGHT)
 
-        end_cell = self.maze[self.end_position[0]][self.end_position[1]]
-        pygame.draw.rect(self.root, colors.SOFT_RED, end_cell.rect)
+        start_cell = self.maze[self.start_position[1]][self.start_position[0]]
+        pygame.draw.rect(self.root, colors.LIME_GREEN, start_cell.get_rect())
 
-
+        end_cell = self.maze[self.end_position[1]][self.end_position[0]]
+        pygame.draw.rect(self.root, colors.SOFT_RED, end_cell.get_rect())
 
     def set_wall(self, alt):
         if alt:
@@ -68,7 +72,8 @@ class Maze:
                 if cell.click_in_bound(point):
                     cell.left_mouse_down_listener(point)
                     break
-            else: continue
+            else:
+                continue
             break
 
     def cell_click(self, cell):
@@ -79,5 +84,22 @@ class Maze:
                     and (cell.x, cell.y) != self.end_position:
                 cell.is_wall = not cell.is_wall
 
-        if self.state == MazeState.SET_VALUE:
+        elif self.state == MazeState.SET_VALUE:
+            self.set_value_selected_cell = cell
+
+        elif self.state == MazeState.SET_START:
+            if not cell.is_wall:
+                self.start_position = cell.x, cell.y
+
+        elif self.state == MazeState.SET_END:
+            if not cell.is_wall:
+                self.end_position = cell.x, cell.y
+
+    def cell_value(self, key):
+        if self.state == MazeState.NONE:
             pass
+        if self.state == MazeState.SET_VALUE:
+            if 48 <= key <= 57:
+                self.set_value_selected_cell.add_char(chr(key))
+            elif key == pygame.K_BACKSPACE:
+                self.set_value_selected_cell.del_char()
