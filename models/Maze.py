@@ -3,6 +3,7 @@ from enum import Enum
 import pygame
 
 from models.Cell import Cell
+from utils.solution_finder import find_solution_subsets
 from resources import colors
 
 
@@ -19,27 +20,31 @@ class Maze:
         self.root = root
         self.cols = cols
         self.rows = rows
-        self.maze = [[Cell(root, x, y, self.cell_click) for x in range(cols)] for y in range(rows)]
+        self.cells = [[Cell(root, x, y, self.cell_click) for x in range(cols)] for y in range(rows)]
         self.state = MazeState.NONE
 
         self.set_value_selected_cell: Cell | None = None
 
         self.start_position = (0, 0)
         self.end_position = (-1, -1)
+        self.target = None
 
     def draw_maze(self):
-        for row in self.maze:
+        for row in self.cells:
             for cell in row:
                 cell.draw()
 
         if self.state == MazeState.SET_VALUE and self.set_value_selected_cell is not None:
             self.set_value_selected_cell.draw_mask(colors.BLUE_HIGHLIGHT)
 
-        start_cell = self.maze[self.start_position[1]][self.start_position[0]]
+        start_cell = self.cells[self.start_position[1]][self.start_position[0]]
         pygame.draw.rect(self.root, colors.LIME_GREEN, start_cell.get_rect())
 
-        end_cell = self.maze[self.end_position[1]][self.end_position[0]]
+        end_cell = self.cells[self.end_position[1]][self.end_position[0]]
         pygame.draw.rect(self.root, colors.SOFT_RED, end_cell.get_rect())
+
+    def set_target(self, target):
+        self.target = int(target)
 
     def set_wall(self, alt):
         if alt:
@@ -67,7 +72,7 @@ class Maze:
         self.state = MazeState.NONE
 
     def cell_click_listener(self, point):
-        for row in self.maze:
+        for row in self.cells:
             for cell in row:
                 if cell.click_in_bound(point):
                     cell.left_mouse_down_listener(point)
@@ -103,3 +108,12 @@ class Maze:
                 self.set_value_selected_cell.add_char(chr(key))
             elif key == pygame.K_BACKSPACE:
                 self.set_value_selected_cell.del_char()
+
+    def solve_maze(self):
+        value_cells = []
+        for row in self.cells:
+            for cell in row:
+                if not cell.is_wall and cell.value != "":
+                    value_cells.append(cell)
+
+        results = find_solution_subsets(value_cells, self.target)
