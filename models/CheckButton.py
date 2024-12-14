@@ -4,7 +4,7 @@ from resources import colors
 font.init()
 
 
-class Button():
+class CheckButton():
     btn_font = font.Font("resources/fonts/Quicksand-Regular.ttf", 20)
 
     def __init__(self,
@@ -65,3 +65,44 @@ class Button():
 
     def set_action(self, func):
         self.action = func
+
+
+class CheckButtonGroup:
+    def __init__(self, root, pos, size, titles, color_schema):
+        self.buttons = []
+        self.pos = pos
+        c_pos = pos
+        for title in titles:
+            button = CheckButton(root, c_pos, size, title, *color_schema)
+            self.buttons.append(button)
+            c_pos = (c_pos[0], c_pos[1]+58)
+
+    def set_actions(self, *funcs):
+        for i in range(len(funcs)):
+            self.buttons[i].set_action(funcs[i])
+
+    def update(self):
+        for button in self.buttons:
+            button.update()
+
+    def left_mouse_down_listener(self, point):
+        for i in range(len(self.buttons)):
+            btn = self.buttons[i]
+
+            if btn.point_in_bound(point):
+                btn.is_alt = not btn.is_alt
+                for j in range(len(self.buttons)):
+                    if i == j:
+                        continue
+
+                    self.buttons[j].is_alt = False
+
+                if btn.action is not None:
+                    btn.action(btn.is_alt)
+
+                break
+
+
+
+
+

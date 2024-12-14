@@ -9,7 +9,7 @@ font.init()
 class Cell:
     Size = 50
     Margin = 1
-    cell_font =  font.Font("resources/fonts/Quicksand-Regular.ttf", 20)
+    cell_font = font.Font("resources/fonts/Quicksand-Regular.ttf", 20)
 
     def __init__(self, root, x, y, action):
         self.root = root
@@ -18,7 +18,6 @@ class Cell:
         self.gx = self.x * self.Size
         self.gy = self.y * self.Size
         self.is_wall = False
-        self.visited = False
         self.action = action
         self.surface = Surface((self.Size, self.Size), pygame.SRCALPHA)
         self.value = ""
@@ -33,7 +32,6 @@ class Cell:
         text_surf = self.cell_font.render(self.value, True, colors.BLACK)
         text_rect = text_surf.get_rect(center=self.surface.get_rect().center)
         self.surface.blit(text_surf, text_rect)
-
 
     def get_rect(self):
         return Rect(self.gx, self.gy, self.Size, self.Size)
@@ -56,11 +54,9 @@ class Cell:
         pygame.draw.rect(self.surface, color, self.get_rect())
         self.root.blit(self.surface, (self.gx, self.gy))
 
-
     def add_char(self, char):
         if len(self.value) < 2:
             self.value += char
 
     def del_char(self):
         self.value = self.value[:-1]
-
