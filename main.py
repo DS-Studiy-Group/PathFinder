@@ -95,13 +95,13 @@ class MainWindow:
 
     def animate_branch_solution(self, branch: list):
         b = branch[::-1]
-        print("branch", [(c.x, c.y) for c in branch])
+        # print("branch", [(c.x, c.y) for c in branch])
         for cell in b[1:]:
             self.draw_circle(cell)
             yield
 
             if cell.branches:
-                print("x, y", cell.x, cell.y)
+                # print("x, y", cell.x, cell.y)
                 for sub_branch in cell.branches:
                     for _ in self.animate_branch_solution(sub_branch):
                         yield
