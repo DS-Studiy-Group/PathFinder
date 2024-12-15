@@ -21,11 +21,19 @@ class Cell:
         self.action = action
         self.surface = Surface((self.Size, self.Size), pygame.SRCALPHA)
         self.value = ""
+        self.branches = []
+        self.color = colors.WHITE
+
+    def reset(self):
+        self.is_wall = False
+        self.value = ""
+        self.branches = []
+        self.color = colors.WHITE
 
     def update_surf(self):
 
         if not self.is_wall:
-            self.surface.fill(colors.WHITE)
+            self.surface.fill(self.color)
         else:
             self.surface.fill(colors.BLACK)
 

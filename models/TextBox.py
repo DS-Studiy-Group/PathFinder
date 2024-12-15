@@ -59,6 +59,9 @@ class TextBox():
         if self.point_in_bound(point):
             self.focused = not self.focused
 
+        else:
+            self.focused = False
+
     def key_down_listener(self, key):
         if not self.focused:
             return
